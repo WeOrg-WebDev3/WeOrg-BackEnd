@@ -3,20 +3,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
-const item = require('./scripts/myController');
-const path = require('path');
-app.use(express.static('views'));
-
+const account = require('./scripts/myController');
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(bodyParser.json())
 
-app.all('/', function (req, res) {
-  res.sendFile(path.join(__dirname, './index.html'));
-});
 
-const dbConfig = 'mongodb://127.0.0.1:27017/dbItems';
+const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
 mongoose.Promise = global.Promise;
 
 mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
@@ -26,21 +20,36 @@ mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
     console.log('Cannot connect to dbs.', err);
     process.exit();
 });
+var db = mongoose.connection
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
-app.post('/item/create', function (req,res) {
-  item.create(req,res);
+app.post('/account', function (req,res) {
+  account.create(req,res);
 });
 
 
-app.get('/item/retrieve/all', function (req,res) {
-  item.findAll(req,res);
+app.get('/accounts/retrieveAll', function (req,res) {
+  account.findAll(req,res);
 })
 
 
-app.get('/item/retrieve/:id', function (req,res) {
+app.get('/account/retrieve/:id', function (req,res) {
   let id = req.params.id;
-  item.findOne(req,res,id);
+  account.findOne(req,res,id);
+})
+
+
+
+app.put('/account/update/:id',function (req,res) {
+  let id = req.params.id;
+  account.update(req,res,id)
+})
+
+
+app.delete('/account/delete/:id', function (req,res) {
+  let id = req.params.id;
+  account.delete(req,res,id);
 })
 
 

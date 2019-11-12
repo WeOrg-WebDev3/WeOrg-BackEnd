@@ -27,11 +27,11 @@ var Organizer = new Schema({
     required: true 
   },
   password: { 
-    type: password, 
+    type: String, 
     required: true 
-  }
+  },
 });
-Organizer.plugin(uniqueValidator, { message: '{item} must be unique' });
+Organizer.plugin(uniqueValidator, { message: '{name} must be unique' });
 
 // Compile model from schema
-module.exports = mongoose.model('Item', Organizer);
+module.exports = mongoose.model('NewOrg', Organizer);
