@@ -4,52 +4,58 @@ const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
 const account = require('./scripts/myController');
+const quer = require('./scripts/Myinquery');
+const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
+const db = mongoose.connection
 
 app.use(bodyParser.urlencoded({ extended: true }))
-
 app.use(bodyParser.json())
 
 
-const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
 mongoose.Promise = global.Promise;
-
 mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
-  ).then(() => {
-    console.log("Connected to dbs.");    
+).then(() => {
+  console.log("Connected to dbs.");
 }).catch(err => {
-    console.log('Cannot connect to dbs.', err);
-    process.exit();
+  console.log('Cannot connect to dbs.', err);
+  process.exit();
 });
-var db = mongoose.connection
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
-app.post('/account', function (req,res) {
-  account.create(req,res);
+app.post('/account', function (req, res) {
+  account.create(req, res);
 });
 
+app.post('/query', function (req, res) {
+  quer.create(req, res);
+});
 
-app.get('/accounts/retrieveAll', function (req,res) {
-  account.findAll(req,res);
+app.get('/query/retrieveAll', function (req, res) {
+  quer.findAll(req, res);
+})
+
+app.get('/accounts/retrieve', function (req, res,err) {
+  const name = req.body.name;
+  if (name) {
+    account.findOne(req, res, name);
+  } else if(name == undefined ) {
+    account.findAll(req, res);
+  }else{
+    err;
+  }
 })
 
 
-app.get('/account/retrieve/:id', function (req,res) {
-  let id = req.params.id;
-  account.findOne(req,res,id);
+app.put('/account/update/:name', function (req, res) {
+  const name = req.params.name;
+  account.update(req, res, name)
 })
 
 
-
-app.put('/account/update/:id',function (req,res) {
-  let id = req.params.id;
-  account.update(req,res,id)
-})
-
-
-app.delete('/account/delete/:id', function (req,res) {
-  let id = req.params.id;
-  account.delete(req,res,id);
+app.delete('/account/delete/:name', function (req, res) {
+  const name = req.params.name;
+  account.delete(req, res, name);
 })
 
 
