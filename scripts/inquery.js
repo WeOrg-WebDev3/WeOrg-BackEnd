@@ -5,10 +5,11 @@ var uniqueValidator = require('mongoose-unique-validator');
 var Schema = mongoose.Schema;
 
 
-var Organizer = new Schema({
+var query2 = new Schema({
+  organizer: {type: mongoose.Schema.Types.ObjectId,
+         ref: 'NewOrg'},
   name: { 
     type: String,
-    required: true, 
     unique: true 
   },
   email: { 
@@ -24,23 +25,15 @@ var Organizer = new Schema({
     type: String, 
     required: true 
   },
-  password: { 
-    type: String, 
-    required: true 
-  },
   event: { 
     type: String, 
     required: true 
   },
-  numEvent: { 
-    type: Number, 
-    required: true 
-  },
-  status: { 
+  message: { 
     type: String, 
     required: true 
-  },
+  }
 });
-Organizer.plugin(uniqueValidator, { message: '{name} must be unique' });
+query2.plugin(uniqueValidator, { message: '{name} must be unique' });
 
-module.exports = mongoose.model('NewOrg', Organizer);
+module.exports = mongoose.model('Inquery', query2);
