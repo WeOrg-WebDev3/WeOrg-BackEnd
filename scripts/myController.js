@@ -1,4 +1,6 @@
 const NewORg = require('./model.js');
+const multer = require('multer');
+const store =path.join(__dirname, '../../helpers');
 
 module.exports.create = (req, res) => {
     const newOrg2 = new NewORg({
@@ -9,7 +11,8 @@ module.exports.create = (req, res) => {
         password:req.body.password,
         event: req.body.event,
         numEvent: req.body.numEvent,
-        status: req.body.status
+        status: req.body.status,
+        img: req.body.img
     });
 
     newOrg2.save()
@@ -23,7 +26,7 @@ module.exports.create = (req, res) => {
 
 }
 module.exports.findAll = (req, res) => {
-        NewORg.find()
+        NewORg.find({})
             .then(organization => {
                 res.send(organization);
             }).catch(err => {
@@ -65,6 +68,7 @@ module.exports.findOne = (req, res, name) => {
             event: req.body.event,
             numEvent: req.body.numEvent,
             status: req.body.status
+
         }, { new: true })
             .then(organization => {
                 if (!organization) {

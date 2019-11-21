@@ -1,6 +1,8 @@
-const port = 8000;
+const port = process.env.PORT || 8000;
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer')
+const store = require('../helpers/storage');
 const app = express();
 const mongoose = require('mongoose');
 const account = require('./scripts/myController');
@@ -31,17 +33,34 @@ app.post('/query', function (req, res) {
   quer.create(req, res);
 });
 
+app.post('/addImage', upload.single('img'), (req, res, next) => {
+  console.log(req.body)
+  let data = {
+    img: req.file.filename
+  };
+  let entry = new Entry(data);
+
+  entry.save()
+    .then(() => {
+      res.json({ message: "Successful!" });
+      console.log('saved')
+    }).catch((err) => {
+      res.status(400).json({ err: err.message })
+    });
+});
+
+
 app.get('/query/retrieveAll', function (req, res) {
   quer.findAll(req, res);
 })
 
-app.get('/accounts/retrieve', function (req, res,err) {
+app.get('/accounts/retrieve', function (req, res, err) {
   const name = req.body.name;
   if (name) {
     account.findOne(req, res, name);
-  } else if(name == undefined ) {
+  } else if (name == undefined) {
     account.findAll(req, res);
-  }else{
+  } else {
     err;
   }
 })

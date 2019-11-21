@@ -40,6 +40,10 @@ var Organizer = new Schema({
     type: String, 
     required: true 
   },
+  img: {
+    type: String,
+    requires: false
+  },
 });
 Organizer.plugin(uniqueValidator, { message: '{name} must be unique' });
 
