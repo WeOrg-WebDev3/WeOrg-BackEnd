@@ -2,20 +2,23 @@ const port = process.env.PORT || 8000;
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer')
-const store = require('../helpers/storage');
+const store = require('./helpers/storage');
 const app = express();
 const mongoose = require('mongoose');
 const account = require('./scripts/myController');
-const quer = require('./scripts/Myinquery');
+const quer = require('./models/Myinquery');
 const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
 const db = mongoose.connection
-
+const auth = require('./scripts/auth')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+var upload = multer({
+  storage: store.storage
+});
 
 mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
+mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }
 ).then(() => {
   console.log("Connected to dbs.");
 }).catch(err => {
@@ -77,7 +80,7 @@ app.delete('/account/delete/:name', function (req, res) {
   account.delete(req, res, name);
 })
 
-
+app.use(auth)
 app.listen(port, () => {
   console.log("Server is listening on port " + port);
 });
