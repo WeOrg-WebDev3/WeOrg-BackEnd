@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
+const cors = require('cors')
 const account = require('./scripts/myController');
 const quer = require('./scripts/Myinquery');
 const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
@@ -10,7 +11,7 @@ const db = mongoose.connection;
 const action = require('./scripts/try');
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-
+app.use(cors())
 
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
@@ -24,8 +25,11 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 app.post('/account', function (req, res) {
+  console.log(req)
   account.create(req, res);
+  
 });
+
 
 app.post('/query', function (req, res) {
   quer.create(req, res);

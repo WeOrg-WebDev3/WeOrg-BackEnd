@@ -4,13 +4,13 @@ const NewORg = require('./model.js');
 module.exports.create = (req, res) => {
     const newOrg2 = new NewORg({
         name: req.body.name,
-        email: req.body.email,
-        contact: req.body.contact,
         address: req.body.address,
-        password:req.body.password,
-        event: req.body.event,
-        numEvent: req.body.numEvent,
-        status: req.body.status
+        email: req.body.email,
+        password: req.body.password,
+        contact: req.body.contact,
+        price: req.body.price,
+        packages: req.body.packages,
+        photo: req.body.photo
     });
 
     newOrg2.save()

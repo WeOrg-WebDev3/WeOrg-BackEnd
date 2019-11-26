@@ -11,35 +11,35 @@ var Organizer = new Schema({
     required: true, 
     unique: true 
   },
+  address: { 
+    type: String, 
+    required: true 
+  },
   email: { 
     type: String, 
     unique: true, 
-    required: true 
-  },
-  contact: { 
-    type: Number, 
-    required: true 
-  },
-  address: { 
-    type: String, 
     required: true 
   },
   password: { 
     type: String, 
     required: true 
   },
-  event: { 
-    type: String, 
-    required: true 
-  },
-  numEvent: { 
+  contact: { 
     type: Number, 
     required: true 
   },
-  status: { 
+  
+  price: { 
+    type: Number, 
+    required: true 
+  },
+ 
+ 
+  packages: { 
     type: String, 
     required: true 
   },
+  
 });
 Organizer.plugin(uniqueValidator, { message: '{name} must be unique' });
 
