@@ -1,3 +1,3 @@
-# InformationSystem
+# WeOrg
 
-Project on Information System
+Final project in WebDev 3
