@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const account = require('./scripts/myController');
 const quer = require('./scripts/Myinquery');
 const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
-const db = mongoose.connection
-
+const db = mongoose.connection;
+const action = require('./scripts/try');
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
@@ -31,31 +31,66 @@ app.post('/query', function (req, res) {
   quer.create(req, res);
 });
 
-app.get('/query/retrieveAll', function (req, res) {
-  quer.findAll(req, res);
-})
-
-app.get('/accounts/retrieve', function (req, res,err) {
+app.get('/query/retrieve', function (req, res, err) {
   const name = req.body.name;
   if (name) {
-    account.findOne(req, res, name);
-  } else if(name == undefined ) {
-    account.findAll(req, res);
-  }else{
+    quer.findOne(req, res, name);
+  } else if (name == undefined) {
+    quer.findAll(req, res);
+  } else {
     err;
   }
 })
 
-
-app.put('/account/update/:name', function (req, res) {
+app.put('/query/update/:name', function (req, res) {
   const name = req.params.name;
-  account.update(req, res, name)
+  quer.update(req, res, name)
 })
 
 
-app.delete('/account/delete/:name', function (req, res) {
+app.delete('/query/delete/:name', function (req, res) {
   const name = req.params.name;
-  account.delete(req, res, name);
+  quer.delete(req, res, name);
+})
+
+app.post('/retrieveOne/:name', function (req, res) {
+  const namei = req.params.name;
+  console.log(namei)
+  if (namei != undefined) {
+    action.findOrgOne(namei).then(resp => {
+      res.send(resp)
+    }).catch(err => {
+      res.send(err)
+    })
+  }
+
+})
+
+app.post('/retrieveAll', function (req, res) {
+  action.All().then(resp => {
+    res.send(resp)
+  }).catch(err => {
+    res.send(err)
+  })
+})
+
+
+app.put('/Update/:name', function (req, res) {
+  const namei = req.params.name;
+  action.Update(namei).then(resp => {
+    res.send(resp)
+  }).catch(err => {
+    res.send(err)
+  })
+})
+
+app.delete('/Delete/:name', function (req, res) {
+  const namei = req.params.name;
+  action.Delete(namei).then(resp => {
+    res.send(resp)
+  }).catch(err => {
+    res.send(err)
+  })
 })
 
 

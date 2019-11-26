@@ -1,1 +1,3 @@
-# WeOrg-BackEnd
+# InformationSystem
+
+Project on Information System
