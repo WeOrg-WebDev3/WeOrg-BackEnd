@@ -1,4 +1,4 @@
-const NewORg = require('./model.js');
+const NewORg = require('../models/model.js');
 function findOrgOne(namei) {
     return new Promise((resolve, reject) => {
         NewORg.findOne({ name: namei }, (err, dbres) => {
@@ -23,6 +23,29 @@ function All() {
     })
 }
 
+function findOrgByAddress(addressi) {
+    return new Promise((resolve, reject) => {
+        NewORg.find({address: addressi}, (err, dbres) => {
+            if(err) {
+                reject(err);
+            } else {
+                resolve(dbres);
+            }
+        })
+    })
+}
+
+function findOrgByEvent(eventi) {
+    return new Promise((resolve, reject) => {
+        NewORg.find({event: eventi}, (err, dbres) => {
+            if(err) {
+                reject(err);
+            } else {
+                resolve(dbres);
+            }
+        })
+    })
+}
 
 function Update(namei) {
     return new Promise((resolve, reject) => {
@@ -68,6 +91,8 @@ function Login(emaili) {
 module.exports = {
     findOrgOne,
     All,
+    findOrgByAddress,
+    findOrgByEvent,
     Update,
     Delete,
     Login

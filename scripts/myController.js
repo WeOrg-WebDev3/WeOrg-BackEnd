@@ -1,4 +1,4 @@
-const NewORg = require('./model.js');
+const NewORg = require('../models/model.js');
 const multer = require('multer');
 const path = require('path');
 const store = path.join(__dirname, '../../helpers');

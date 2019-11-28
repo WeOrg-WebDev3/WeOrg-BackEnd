@@ -45,4 +45,42 @@ authRoute.get('/sample', function (req, res) {
     })
 })
 
+authRoute.route('/userInfo').post((req, res) => {
+  var user = jwt.decode(req.body.data);
+  console.log(user)
+  getResult();
+  async function getResult() {
+    try {
+      var result = await account.findOrg(user._id);
+      if (result.data != 'not found' || result.data == undefined) {
+        res.status(200).json({
+          data: result.data
+        });
+      } else {
+        res.status(400).json({
+          message: 'User not found!'
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        message: 'Unexpected error occured!'
+      });
+    }
+  }
+});
+
+var tempdata = {
+  email: '',
+  password: ''
+};
+
+authRoute.route('/signup').post((req, res) => {
+  tempdata = req.body;
+  res.status(200).end();
+});
+
+authRoute.route('/signedup').get((req, res) => {
+  res.status(200).json(tempdata);
+});
+
 module.exports = authRoute
