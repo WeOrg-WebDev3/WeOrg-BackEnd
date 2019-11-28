@@ -1,4 +1,9 @@
-const port = 8000;
+const port = process.env.PORT || 8001;
+const multer = require('multer');
+const store = require('./helpers/storage.js');
+const auth = require('./scripts/auth')
+
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -9,9 +14,15 @@ const quer = require('./scripts/Myinquery');
 const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
 const db = mongoose.connection;
 const action = require('./scripts/try');
+const { User } = require('./scripts/model')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
+
+var upload = multer({
+  storage: store.storage
+});
+
 
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
@@ -23,7 +34,7 @@ mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
 });
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-
+//SIGNIN
 app.post('/account', function (req, res) {
   console.log(req)
   account.create(req, res);
@@ -31,9 +42,37 @@ app.post('/account', function (req, res) {
 });
 
 
+
+app.post('/signup',(req,res) => {
+  const user = new User({
+      name: req.body.name,
+      address: req.body.address,
+      email: req.body.email,
+      password: req.body.password,
+      contact: req.body.contact,
+      event: req.body.event,
+      price: req.body.price,
+      packages: req.body.packages
+  })
+  
+  user.save((err,response)=> {
+      if(err){
+          res.send(err)
+      }res.status(200).send(response)
+      console.log(response)
+  })
+})
+
+
+app.post('/signin',(req,res)=>{
+  console.log(req)
+  account.login(req, res);
+})
+
 app.post('/query', function (req, res) {
   quer.create(req, res);
 });
+
 
 app.get('/query/retrieve', function (req, res, err) {
   const name = req.body.name;
@@ -46,16 +85,20 @@ app.get('/query/retrieve', function (req, res, err) {
   }
 })
 
+
 app.put('/query/update/:name', function (req, res) {
   const name = req.params.name;
   quer.update(req, res, name)
 })
 
 
+
 app.delete('/query/delete/:name', function (req, res) {
   const name = req.params.name;
   quer.delete(req, res, name);
 })
+
+
 
 app.post('/retrieveOne/:name', function (req, res) {
   const namei = req.params.name;
@@ -97,7 +140,7 @@ app.delete('/Delete/:name', function (req, res) {
   })
 })
 
-
+app.use(auth)
 app.listen(port, () => {
   console.log("Server is listening on port " + port);
 });
