@@ -13,9 +13,16 @@ const auth = require('./scripts/auth')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+app.use('/static', express.static(path.join(__dirname, 'public/uploads')))
+
 var upload = multer({
   storage: store.storage
 });
+
+let storeImg = (filename) => {
+  //your servername + filename
+  var imgUrl = 'http://127.0.0.1:27017/WeOrg' + filename; //save this to db  
+}
 
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }
@@ -51,6 +58,20 @@ app.post('/addImage', upload.single('img'), (req, res, next) => {
       res.status(400).json({ err: err.message })
     });
 });
+
+app.post('/addMultiple', upload.array('img', 10), (req, res, next) => {
+  const imgs = req.files
+  if (!imgs) {
+      const error = new Error('Please upload a file!')
+      error.httpStatusCode = 400
+      return next(error)
+  } else {
+      imgs.map(img => {
+          store(img.filename)
+      })
+      res.send("success")
+  }
+})
 
 
 app.get('/query/retrieveAll', function (req, res) {

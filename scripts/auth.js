@@ -5,9 +5,6 @@ const jwt = require('jsonwebtoken');
 const config = require('./config');
 const account = require('./myController');
 
-authRoute.get('/sample', function (req, res) {
-    res.send("hello world")
-})
 // authRoute.route('/login').post(function (req, res) {
 //     console.log("dsghfdg")
 //     getResult();
@@ -106,10 +103,9 @@ authRoute.get('/sample', function (req, res) {
 //   res.status(200).json(tempdata);
 // });
 const helper = require('./myController')
-authRoute.post('/login', (req, res) => {
+authRoute.post('/account', (req, res) => {
     let email = req.body.email
     helper.findOrgOne(email).then(resp => {
-        //res.send(resp)
         if (resp != null) {
             //var match = bcrypt.hashSync(req.body.password, resp.password)
             var user = resp
@@ -138,7 +134,6 @@ authRoute.post('/login', (req, res) => {
                 });
             }
         }
-
     })
 })
 module.exports = authRoute;
