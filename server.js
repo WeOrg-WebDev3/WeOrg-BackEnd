@@ -2,8 +2,6 @@ const port = process.env.PORT || 8001;
 const multer = require('multer');
 const store = require('./helpers/storage.js');
 const auth = require('./scripts/auth')
-
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -14,7 +12,7 @@ const quer = require('./scripts/Myinquery');
 const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
 const db = mongoose.connection;
 const action = require('./scripts/try');
-const { User } = require('./scripts/model')
+const { User } = require('./scripts/model.js')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
@@ -36,38 +34,24 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //SIGNIN
 app.post('/account', function (req, res) {
-  console.log(req)
   account.create(req, res);
-  
 });
 
 
-
-app.post('/signup',(req,res) => {
-  const user = new User({
-      name: req.body.name,
-      address: req.body.address,
-      email: req.body.email,
-      password: req.body.password,
-      contact: req.body.contact,
-      event: req.body.event,
-      price: req.body.price,
-      packages: req.body.packages
-  })
-  
-  user.save((err,response)=> {
-      if(err){
-          res.send(err)
-      }res.status(200).send(response)
-      console.log(response)
-  })
-})
-
-
 app.post('/signin',(req,res)=>{
-  console.log(req)
-  account.login(req, res);
+  User.findOne({'email':req.body.email},(err,user)=>{
+      if(!user) res.json({message:"Login failed, user not found"})
+
+      user.comparePassword(req.body.password,(err,isMatch)=>{
+          if(err) throw err;
+          if(isMatch) return res.status(200).json({
+              message: "Succesfully log"
+          });
+          res.status(400).send("Email not found")
+      })
+  })
 })
+
 
 app.post('/query', function (req, res) {
   quer.create(req, res);
@@ -114,6 +98,7 @@ app.post('/retrieveOne/:name', function (req, res) {
 })
 
 app.post('/retrieveAll', function (req, res) {
+  console.log(req.body)
   action.All().then(resp => {
     res.send(resp)
   }).catch(err => {

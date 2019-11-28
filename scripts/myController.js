@@ -1,11 +1,7 @@
-const NewORg = require('./model.js');
-const multer = require('multer');
-const path = require('path');
-const store = path.join(__dirname, '../../helpers');
-
+const {User} = require('./model.js');
 
 module.exports.create = (req, res) => {
-    const newOrg2 = new NewORg({
+    const newOrg2 = new User({
         name: req.body.name,
         address: req.body.address,
         email: req.body.email,
@@ -13,7 +9,6 @@ module.exports.create = (req, res) => {
         contact: req.body.contact,
         price: req.body.price,
         packages: req.body.packages,
-        photo: req.body.photo
     });
 
     newOrg2.save()
@@ -24,22 +19,9 @@ module.exports.create = (req, res) => {
                 message: err.message || "Error!"
             });
         });
-
 }
 
-module.exports.login = (req, res) => {
-    NewORg.findOne({'email':req.body.email},(err,user)=>{
-        if(!user) res.json({message:"Login failed, user not found"})
 
-        user.comparePassword(req.body.password,(err,isMatch)=>{
-            if(err) throw err;
-            if(isMatch) return res.status(200).json({
-                message: "Succesfully log"
-            });
-            res.status(400).send("Email not found")
-        })
-    })
-}
 
 
 

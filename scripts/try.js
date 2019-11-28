@@ -1,4 +1,4 @@
-const NewORg = require('./model.js');
+const NewORg = require('./myController.js');
 function findOrgOne(namei) {
     return new Promise((resolve, reject) => {
         NewORg.findOne({ name: namei }, (err, dbres) => {

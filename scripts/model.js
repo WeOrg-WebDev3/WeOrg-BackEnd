@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
+const bcrypt = require('bcryptjs')
+let SALT = 10
 
 //Define a schema
 var Schema = mongoose.Schema;
@@ -73,7 +75,10 @@ Organizer.methods.comparePassword = function(candidatePassword,checkpassword){
   })
 }
      
+
+     
 Organizer.plugin(uniqueValidator, { message: '{name} must be unique' });
 
-const User = mongoose.model('User', Organizer);
+
+const User = mongoose.model('organizer', Organizer);
 module.exports = {User}
