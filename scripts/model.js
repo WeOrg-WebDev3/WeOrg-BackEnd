@@ -34,6 +34,10 @@ var Organizer = new Schema({
     type: String, 
     required: true 
   },
+  event: { 
+    type: String, 
+    required: true 
+  },
   
   price: { 
     type: Number, 

@@ -12,6 +12,8 @@ const quer = require('./scripts/Myinquery');
 const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
 const db = mongoose.connection;
 const action = require('./scripts/try');
+const jwt = require('jsonwebtoken');
+const config = require('./scripts/config');
 const { User } = require('./scripts/model.js')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -44,9 +46,22 @@ app.post('/signin',(req,res)=>{
 
       user.comparePassword(req.body.password,(err,isMatch)=>{
           if(err) throw err;
-          if(isMatch) return res.status(200).json({
-              message: "Succesfully log"
-          });
+          if (isMatch) {
+            var token = jwt.sign({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                password: user.password
+            }, config.secret, {
+                expiresIn: 86400 // expires in 24 hours
+            });
+            res.status(200).send({
+                auth: true,
+                token: token,
+                email: user,
+                message: 'login successful'
+            });
+        } 
           res.status(400).send("Email not found")
       })
   })

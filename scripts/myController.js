@@ -6,6 +6,7 @@ module.exports.create = (req, res) => {
         address: req.body.address,
         email: req.body.email,
         password: req.body.password,
+        event: req.body.event,
         contact: req.body.contact,
         price: req.body.price,
         packages: req.body.packages,
