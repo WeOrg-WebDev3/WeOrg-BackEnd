@@ -1,7 +1,7 @@
-const NewORg = require('./myController.js');
-function findOrgOne(namei) {
+const quer = require('./inqueryCreate.js');
+function findOnequer(namei) {
     return new Promise((resolve, reject) => {
-        NewORg.findOne({ name: namei }, (err, dbres) => {
+      quer.findOne({ name: namei }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -13,7 +13,7 @@ function findOrgOne(namei) {
 
 function All() {
     return new Promise((resolve, reject) => {
-        NewORg.find({}, (err, dbres) => {
+      quer.find({}, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -26,7 +26,7 @@ function All() {
 
 function Update(namei) {
     return new Promise((resolve, reject) => {
-        NewORg.updateOne({ name: namei }, (err, dbres) => {
+      quer.updateOne({ name: namei }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -38,7 +38,7 @@ function Update(namei) {
 
 function Delete(namei) {
     return new Promise((resolve, reject) => {
-        NewORg.deleteOne({ name: namei }, (err, dbres) => {
+      quer.deleteOne({ name: namei }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -51,7 +51,7 @@ function Delete(namei) {
 
 function Login(emaili) {
     return new Promise((_resolve, reject) => {
-        NewORg.findOne({ email: emaili }, (err, user) => {
+      quer.findOne({ email: emaili }, (err, user) => {
             if (!user) reject(err)
             user.comparePassword(req.body.password, (err, isMatch) => {
                 if (err) throw err;
@@ -66,7 +66,7 @@ function Login(emaili) {
 
 
 module.exports = {
-    findOrgOne,
+    findOnequer,
     All,
     Update,
     Delete,
