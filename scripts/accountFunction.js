@@ -25,6 +25,19 @@ function findEventOne(namei) {
     })
 }
 
+
+function findEmailOne(namei) {
+    return new Promise((resolve, reject) => {
+        User.find({ email: namei }, (err, dbres) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(dbres);
+            }
+        })
+    })
+}
+
 function All() {
     return new Promise((resolve, reject) => {
         User.find({}, (err, dbres) => {
@@ -69,5 +82,6 @@ module.exports = {
     All,
     Update,
     Delete,
-    findEventOne
+    findEventOne,
+    findEmailOne
 }

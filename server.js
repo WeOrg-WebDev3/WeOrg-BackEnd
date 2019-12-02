@@ -1,4 +1,4 @@
-const PORT =  8000;
+const PORT = 8002;
 const multer = require('multer');
 const store = require('./helpers/storage.js');
 const auth = require('./scripts/auth')
@@ -28,7 +28,7 @@ var imgUrl = `http://localhost:${PORT}/files/`
 
 
 mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true,createIndexes : true }
+mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, createIndexes: true }
 ).then(() => {
   console.log("Connected to dbs.");
 }).catch(err => {
@@ -54,13 +54,13 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // var Image = mongoose.model('Image', ImageSchema, 'images'); //images is the collection
 
 var storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'uploads')
-    },
-    filename: function(req, file, cb) {
-        var filename = `uploads_${Math.round(+new Date()/1000)}_${file.originalname}`
-        cb(null, filename)
-    }
+  destination: function (req, file, cb) {
+    cb(null, 'uploads')
+  },
+  filename: function (req, file, cb) {
+    var filename = `uploads_${Math.round(+new Date() / 1000)}_${file.originalname}`
+    cb(null, filename)
+  }
 })
 
 var upload = multer({ storage: storage, limits: { fileSize: 1000000000 } })
@@ -71,37 +71,37 @@ var upload = multer({ storage: storage, limits: { fileSize: 1000000000 } })
 // data.append('img' ,uploadedFiles)
 
 app.post('/uploadMultiple', upload.array('img'), (req, res, next) => {
-    const imgs = req.files
-    if (!imgs) {
-        const error = new Error('Please upload a file')
-        error.httpStatusCode = 400
-        return next(error)
-    } else {
-        imgs.map(img => {
-            let src = `${imgUrl}${img.filename}`; //save this to db  
-            var new_img = new Image({ name: img.filename, src: src });
-            // save model to database
-            new_img.save(function(err, imgSaved) {
-                if (err) return console.error(err);
-                console.log(imgSaved.name + " saved to images collection.");
-            });
-            img.src = `http://localhost:${PORT}/static/uploads/${img.filename}`
-        })
-        res.send(imgs)
-    }
+  const imgs = req.files
+  if (!imgs) {
+    const error = new Error('Please upload a file')
+    error.httpStatusCode = 400
+    return next(error)
+  } else {
+    imgs.map(img => {
+      let src = `${imgUrl}${img.filename}`; //save this to db  
+      var new_img = new Image({ name: img.filename, src: src });
+      // save model to database
+      new_img.save(function (err, imgSaved) {
+        if (err) return console.error(err);
+        console.log(imgSaved.name + " saved to images collection.");
+      });
+      img.src = `http://localhost:${PORT}/static/uploads/${img.filename}`
+    })
+    res.send(imgs)
+  }
 })
 
 
 app.post('/uploadSingle', upload.single('img'), (req, res, next) => {
-    const img = req.file
-    if (!img) {
-        const error = new Error('Please select a file')
-        error.httpStatusCode = 400
-        return next(error)
-    } else {
-        // store(img.storage.filename)
-        res.send("success")
-    }
+  const img = req.file
+  if (!img) {
+    const error = new Error('Please select a file')
+    error.httpStatusCode = 400
+    return next(error)
+  } else {
+    // store(img.storage.filename)
+    res.send("success")
+  }
 })
 
 //SIGNIN
@@ -167,34 +167,68 @@ app.post('/account', function (req, res) {
 });
 
 // Logging In
-var userId ;
-app.post('/signin',(req,res)=>{
-  User.findOne({'email':req.body.email},(err,user)=>{
-      if(!user) res.json({message:"Login failed, user not found"})
-
-      user.comparePassword(req.body.password,(err,isMatch)=>{
-          if(err) throw err;
-          if (isMatch) {
-            userId = req.body._id;
-            var token = jwt.sign({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                password: user.password
-            }, config.secret, {
-                expiresIn: 86400 // expires in 24 hours
-            });
-            res.status(200).send({
-                auth: true,
-                token: token,
-                email: user,
-                message: 'login successful'
-            });
-        } 
-          res.status(400).send("Email not found")
+var userId;
+app.post('/signin', (req, res) => {
+  const emaili = req.body.email
+  async function getEmail() {
+    try {
+      var result = await action.findEmailOne(emaili);
+      // res.status(200).json(result);
+      res.status(200).json(result);
+      User.comparePassword(req.body.password, (err, isMatch) => {
+        if (err) throw err;
+        if (isMatch) {
+          userId = req.body._id;
+          var token = jwt.sign({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            password: user.password
+          }, config.secret, {
+            expiresIn: 86400 // expires in 24 hours
+          });
+          res.status(200).send({
+            auth: true,
+            token: token,
+            email: user,
+            message: 'login successful'
+          });
+        }
       })
-  })
+    } catch (err) {
+      res.status(400).json(err)
+    }
+  }
+  getEmail();
 })
+// console.log(req.body.email)
+// const emaili = req.body.email
+// User.findOne({'email':emaili},(err,user)=>{
+//     if(!user) res.json({message:"Login failed, user not found"})
+
+// user.comparePassword(req.body.password,(err,isMatch)=>{
+//     if(err) throw err;
+//     if (isMatch) {
+//       userId = req.body._id;
+//       var token = jwt.sign({
+//           _id: user._id,
+//           name: user.name,
+//           email: user.email,
+//           password: user.password
+//       }, config.secret, {
+//           expiresIn: 86400 // expires in 24 hours
+//       });
+//       res.status(200).send({
+//           auth: true,
+//           token: token,
+//           email: user,
+//           message: 'login successful'
+//       });
+//   } 
+//         res.status(400).send("Email not found")
+//     })
+// })
+// })
 
 // retrieve one data by event
 app.get('/retrieveOneEvent/:event', function (req, res) {
@@ -205,7 +239,7 @@ app.get('/retrieveOneEvent/:event', function (req, res) {
     try {
       var result = await action.findEventOne(namei);
       res.status(200).json(result);
-    } catch(err) {
+    } catch (err) {
       res.status(400).json(err)
     }
   }
@@ -257,15 +291,15 @@ app.delete('/Delete/:name', function (req, res) {
     res.send(err)
   })
 })
-app.get('/retriveprofile/', function (req, res) {
-  action.find({ _id: userId }, (err, user) => {
-  if (err) {
-  res.send(err);
-  }
-  res.json({ data: user });
-  //console.log(user)
-  });
-  })
+// app.get('/retriveprofile/', function (req, res) {
+//   action.find({ _id: userId }, (err, user) => {
+//     if (err) {
+//       res.send(err);
+//     }
+//     res.json({ data: user });
+//     //console.log(user)
+//   });
+// })
 
 app.use(auth)
 app.listen(PORT, () => {

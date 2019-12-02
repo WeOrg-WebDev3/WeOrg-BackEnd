@@ -7,7 +7,7 @@ let SALT = 10
 var Schema = mongoose.Schema;
 
 
-var Organizer = new Schema({
+var userSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -30,10 +30,6 @@ var Organizer = new Schema({
     type: Number,
     required: true
   },
-  // password: { 
-  //   type: String, 
-  //   required: true 
-  // },
   event: {
     type: String,
     required: true
@@ -53,46 +49,42 @@ var Organizer = new Schema({
     name: String,
     src: String
   }
-
-
-  // },{
-  //   collection:"CreateOrganizer"
-  // });
 }, {
   collection: "CreateOrganizer"
 });
 
 
-Organizer.pre('save', function (next) {
+userSchema.pre('save', function(next){
   var user = this;
 
-  if (user.isModified('password')) {
-    bcrypt.genSalt(SALT, function (err, salt) {
-      if (err) return next(err);
+  if(user.isModified('password')){
+      bcrypt.genSalt(SALT,function(err,salt){
+          if(err) return next(err);
 
-      bcrypt.hash(user.password, salt, function (err, hash) {
-        if (err) return next(err);
-        user.password = hash;
-        next();
+          bcrypt.hash(user.password,salt ,function(err,hash){
+              if(err) return next(err);
+              user.password = hash;
+              next();
+          })
       })
-    })
 
-  } else {
-    next();
+  }else{
+      next();
   }
 })
 
-Organizer.methods.comparePassword = function (candidatePassword, checkpassword) {
-  bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-    if (err) return checkpassword(err);
-    checkpassword(null, isMatch)
+userSchema.methods.comparePassword = function(candidatePassword,checkpassword){
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch){
+      if(err) return checkpassword(err);
+      checkpassword(null,isMatch)
   })
 }
+     
 
 
 
-Organizer.plugin(uniqueValidator, { message: '{name} must be unique' });
+userSchema.plugin(uniqueValidator, { message: '{name} must be unique' });
 
 
-const User = mongoose.model('organizer', Organizer);
+const User = mongoose.model('organizer', userSchema);
 module.exports = { User }
