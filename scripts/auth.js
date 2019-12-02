@@ -3,11 +3,11 @@ const authRoute = new express.Router();
 // const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
-const account = require('./myController');
+// const account = require('./accountCreate');
 
 authRoute.get('/sample', function (req, res) {
     res.send("hello world")
-    const helper = require('./myController')
+    const helper = require('./accountCreate')
     authRoute.post('/login', (req, res) => {
         let email = req.body.email
         helper.findOrgOne(email).then(resp => {

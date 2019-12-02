@@ -50,6 +50,12 @@ var Organizer = new Schema({
     required: true 
   },
   
+  
+// },{
+//   collection:"CreateOrganizer"
+// });
+},{
+  collection:"CreateOrganizer"
 });
 
 

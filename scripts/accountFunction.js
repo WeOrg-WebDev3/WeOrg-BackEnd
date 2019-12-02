@@ -1,7 +1,8 @@
-const NewORg = require('./accountCreate.js');
+const {User} = require('./accountModel.js');
+// const NewORg = require('./accountCreate.js');
 function findOrgOne(namei) {
     return new Promise((resolve, reject) => {
-        NewORg.findOne({ name: namei }, (err, dbres) => {
+        User.findOne({ name: namei }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -11,9 +12,10 @@ function findOrgOne(namei) {
     })
 }
 
+
 function findEventOne(namei) {
     return new Promise((resolve, reject) => {
-        NewORg.findOne({ name: namei }, (err, dbres) => {
+        User.find({ event: namei }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -25,7 +27,7 @@ function findEventOne(namei) {
 
 function All() {
     return new Promise((resolve, reject) => {
-        NewORg.find({}, (err, dbres) => {
+        User.find({}, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -38,7 +40,7 @@ function All() {
 
 function Update(namei) {
     return new Promise((resolve, reject) => {
-        NewORg.updateOne({ name: namei }, (err, dbres) => {
+        User.updateOne({ name: namei }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -50,7 +52,7 @@ function Update(namei) {
 
 function Delete(namei) {
     return new Promise((resolve, reject) => {
-        NewORg.deleteOne({ name: namei }, (err, dbres) => {
+        User.deleteOne({ name: namei }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {

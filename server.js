@@ -1,4 +1,4 @@
-const port = process.env.PORT || 8001;
+const port = process.env.PORT || 8002;
 const multer = require('multer');
 const store = require('./helpers/storage.js');
 const auth = require('./scripts/auth')
@@ -26,7 +26,7 @@ var upload = multer({
 
 
 mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
+mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true,createIndexes : true }
 ).then(() => {
   console.log("Connected to dbs.");
 }).catch(err => {
@@ -98,6 +98,7 @@ app.post('/account', function (req, res) {
 });
 
 // Logging In
+var userId ;
 app.post('/signin',(req,res)=>{
   User.findOne({'email':req.body.email},(err,user)=>{
       if(!user) res.json({message:"Login failed, user not found"})
@@ -105,6 +106,7 @@ app.post('/signin',(req,res)=>{
       user.comparePassword(req.body.password,(err,isMatch)=>{
           if(err) throw err;
           if (isMatch) {
+            userId = req.body._id;
             var token = jwt.sign({
                 _id: user._id,
                 name: user.name,
@@ -126,18 +128,45 @@ app.post('/signin',(req,res)=>{
 })
 
 // retrieve one data by event
-app.post('/retrieveOne/:name', function (req, res) {
+app.get('/retrieveOneEvent/:event', function (req, res) {
+  console.log(req.body)
   const namei = req.params.event;
   console.log(namei)
-  if (namei != undefined) {
-    action.findEventOne(namei).then(resp => {
-      res.send(resp)
-    }).catch(err => {
-      res.send(err)
-    })
+  async function getEvent() {
+    try {
+      var result = await action.findEventOne(namei);
+      res.status(200).json(result);
+    } catch(err) {
+      res.status(400).json(err)
+    }
   }
+  getEvent();
+    // action.findEventOne(namei).then(resp => {
+    //   // res.send(resp)
+    //   console.log(resp)
+    //   res.status(200).json(resp)
+    // }).catch(err => {
+    //   res.status(400).json(err);
+    //   // res.send(err)
+    // })
+  
 
 })
+
+// app.post('/retrieveOne/:event', function (req, res) {
+//   const namei = req.params.event;
+//   console.log(namei)
+//   if (namei != undefined) {
+//     action.findOrgOne(namei).then(resp => {
+//       res.send(resp)
+//     }).catch(err => {
+//       res.send(err)
+//     })
+//   }
+
+// })
+
+
 
 // retrieve one data by name
 app.post('/retrieveOne/:name', function (req, res) {
@@ -183,6 +212,15 @@ app.delete('/Delete/:name', function (req, res) {
     res.send(err)
   })
 })
+app.get('/retriveprofile/', function (req, res) {
+  action.find({ _id: userId }, (err, user) => {
+  if (err) {
+  res.send(err);
+  }
+  res.json({ data: user });
+  //console.log(user)
+  });
+  })
 
 app.use(auth)
 app.listen(port, () => {
