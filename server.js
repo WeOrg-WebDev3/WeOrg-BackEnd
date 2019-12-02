@@ -41,17 +41,17 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 
-var ImageSchema = mongoose.Schema({
-  name: String,
-  src: String
-},{
-  collection:"images"
-});
+// var ImageSchema = mongoose.Schema({
+//   name: String,
+//   src: String
+// },{
+//   collection:"images"
+// });
 
 
 // images
 // compile schema to model
-var Image = mongoose.model('Image', ImageSchema, 'images'); //images is the collection
+// var Image = mongoose.model('Image', ImageSchema, 'images'); //images is the collection
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {

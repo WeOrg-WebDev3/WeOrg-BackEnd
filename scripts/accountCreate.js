@@ -10,7 +10,8 @@ module.exports.create = (req, res) => {
         event: req.body.event,
         contact: req.body.contact,
         price: req.body.price,
-        packages: req.body.packages
+        packages: req.body.packages,
+        photo: req.body.photo
     });
 
 
