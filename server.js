@@ -1,10 +1,11 @@
-const port = process.env.PORT || 8002;
+const PORT =  8000;
 const multer = require('multer');
 const store = require('./helpers/storage.js');
 const auth = require('./scripts/auth')
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors')
 const account = require('./scripts/accountCreate');
@@ -16,13 +17,14 @@ const inqueraction = require('./scripts/inqueryFunction');
 const jwt = require('jsonwebtoken');
 const config = require('./scripts/config');
 const { User } = require('./scripts/accountModel.js')
-app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
-var upload = multer({
-  storage: store.storage
-});
+app.use('/files', express.static(path.join(__dirname, 'uploads')))
+var imgUrl = `http://localhost:${PORT}/files/`
 
 
 mongoose.Promise = global.Promise;
@@ -34,6 +36,73 @@ mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true,cre
   process.exit();
 });
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+
+
+
+
+var ImageSchema = mongoose.Schema({
+  name: String,
+  src: String
+},{
+  collection:"images"
+});
+
+
+// images
+// compile schema to model
+var Image = mongoose.model('Image', ImageSchema, 'images'); //images is the collection
+
+var storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads')
+    },
+    filename: function(req, file, cb) {
+        var filename = `uploads_${Math.round(+new Date()/1000)}_${file.originalname}`
+        cb(null, filename)
+    }
+})
+
+var upload = multer({ storage: storage, limits: { fileSize: 1000000000 } })
+
+
+// note 'img' in upload is the key you use in FormData in frontend
+//e.g : var data =  new FormData()
+// data.append('img' ,uploadedFiles)
+
+app.post('/uploadMultiple', upload.array('img'), (req, res, next) => {
+    const imgs = req.files
+    if (!imgs) {
+        const error = new Error('Please upload a file')
+        error.httpStatusCode = 400
+        return next(error)
+    } else {
+        imgs.map(img => {
+            let src = `${imgUrl}${img.filename}`; //save this to db  
+            var new_img = new Image({ name: img.filename, src: src });
+            // save model to database
+            new_img.save(function(err, imgSaved) {
+                if (err) return console.error(err);
+                console.log(imgSaved.name + " saved to images collection.");
+            });
+            img.src = `http://localhost:${PORT}/static/uploads/${img.filename}`
+        })
+        res.send(imgs)
+    }
+})
+
+
+app.post('/uploadSingle', upload.single('img'), (req, res, next) => {
+    const img = req.file
+    if (!img) {
+        const error = new Error('Please select a file')
+        error.httpStatusCode = 400
+        return next(error)
+    } else {
+        // store(img.storage.filename)
+        res.send("success")
+    }
+})
 
 //SIGNIN
 
@@ -141,32 +210,8 @@ app.get('/retrieveOneEvent/:event', function (req, res) {
     }
   }
   getEvent();
-    // action.findEventOne(namei).then(resp => {
-    //   // res.send(resp)
-    //   console.log(resp)
-    //   res.status(200).json(resp)
-    // }).catch(err => {
-    //   res.status(400).json(err);
-    //   // res.send(err)
-    // })
-  
 
 })
-
-// app.post('/retrieveOne/:event', function (req, res) {
-//   const namei = req.params.event;
-//   console.log(namei)
-//   if (namei != undefined) {
-//     action.findOrgOne(namei).then(resp => {
-//       res.send(resp)
-//     }).catch(err => {
-//       res.send(err)
-//     })
-//   }
-
-// })
-
-
 
 // retrieve one data by name
 app.post('/retrieveOne/:name', function (req, res) {
@@ -223,6 +268,6 @@ app.get('/retriveprofile/', function (req, res) {
   })
 
 app.use(auth)
-app.listen(port, () => {
-  console.log("Server is listening on port " + port);
-});
+app.listen(PORT, () => {
+  console.log(`server running at ${PORT}`);
+})

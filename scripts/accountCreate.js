@@ -1,5 +1,6 @@
 const {User} = require('./accountModel.js');
 
+
 module.exports.create = (req, res) => {
     const newOrg2 = new User({
         name: req.body.name,
@@ -9,8 +10,11 @@ module.exports.create = (req, res) => {
         event: req.body.event,
         contact: req.body.contact,
         price: req.body.price,
-        packages: req.body.packages,
+        packages: req.body.packages
     });
+
+
+
 
     newOrg2.save()
         .then(data => {

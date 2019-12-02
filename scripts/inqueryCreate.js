@@ -6,7 +6,6 @@ module.exports.create = (req, res) => {
         email: req.body.email,
         contact: req.body.contact,
         address: req.body.address,
-        event: req.body.event,
         message:req.body.message
     });
 

@@ -48,7 +48,7 @@ var Organizer = new Schema({
   packages: { 
     type: String, 
     required: true 
-  },
+  }
   
   
 // },{
