@@ -3,7 +3,7 @@ var uniqueValidator = require('mongoose-unique-validator');
 
 //Define a schema
 var Schema = mongoose.Schema;
-var multer = require('multer');
+//var multer = require('multer');
 
 var Image = new Schema({
     organizerID: [{ type: Schema.Types.ObjectId, ref: 'Organizer' }],
@@ -13,8 +13,7 @@ var Image = new Schema({
         unique: true
     },
     img: { 
-        data: Buffer,
-        contentType: String
+        filename: String
     }
 });
 Image.plugin(uniqueValidator, { message: '{name} must be unique' });

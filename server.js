@@ -19,6 +19,7 @@ const dbConfig = 'mongodb://127.0.0.1:27017/WeOrg';
 const db = mongoose.connection;
 const action = require('./scripts/try');
 const { User } = require('./models/model');
+const Image = require('./models/imageModel');
 
 
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -53,6 +54,7 @@ app.post('/account', (req, res) => {
 });
 
 app.post('/signup', (req, res) => {
+  console.log('test')
   var hashedPassword = bcrypt.hashSync(req.body.password, 8);
   User.create({
     name: req.body.name,
@@ -62,30 +64,66 @@ app.post('/signup', (req, res) => {
     contact: req.body.contact,
     event: req.body.event,
     price: req.body.price,
-    packages: req.body.packages
+    packages: req.body.packages,
+    profileImg: req.body.filename
   },
-  function (err, user) {
-    if (err) return res.status(500).send("There was a problem registering the user.")
+  function (err, User) {
+    console.log(User)
+    if (err) {
+    console.log(err,'errr')  
+     res.status(500).send("There was a problem registering the user.")
+    }else{
     // create a token
-    var token = jwt.sign({ id: user._id }, config.secret, {
+    var token = jwt.sign({ id: User._id }, config.secret, {
       expiresIn: 86400 // expires in 24 hours
     });
-    res.status(200).send({ auth: true, token: token });
+      res.status(200).send({ auth: true, token: token });
+  }
   }); 
 });
 
 
 app.post('/signin', (req, res) => {
-  console.log(req)
+  console.log(req.body)
   // account.login(req, res);
   var token = req.headers['x-access-token'];
-  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  var match = false;
+  User.findOne({email:req.body.email})
+  .then(doc =>{
+    console.log(doc)
+    if(bcrypt.compareSync(req.body.password, doc.password)){
+      match = true;
+    }else{
+      match = false
+    }
+    if(match){
+      var token = jwt.sign({
+        _id: doc._id,
+        name: doc.name,
+        email: doc.email,
+        password: doc.password
+    }, config.secret, {
+        expiresIn: 86400 // expires in 24 hours
+    });
+    res.status(200).send({
+        auth: true,
+        token: token,
+        email: doc.email,
+        message: 'login successful'
+    });
+    }else {
+      res.status(401).json({
+          message: 'Wrong password'
+      });
+  }
+  })
+  // if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
-  jwt.verify(token, config.secret, function (err, decoded) {
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  // jwt.verify(token, config.secret, function (err, decoded) {
+  //   if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
-    res.status(200).send(decoded);
-  });
+  //   res.status(200).send(decoded);
+  // });
 })
 
 app.post('/query', (req, res) => {
@@ -174,6 +212,20 @@ app.delete('/Delete/:name', (req, res) => {
     res.send(err)
   })
 })
+
+app.post('/uploadImg', upload.single('img'),(req, res)=>{
+  console.log(req.file.filename,'filename')
+  console.log(req.body,'body')
+  let token = jwt.decode(token)
+  // token._id
+  let data = {
+
+  }
+  let image =  new Image()
+
+})
+
+
 
 app.use(auth)
 app.listen(port, () => {

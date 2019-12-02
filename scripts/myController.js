@@ -13,7 +13,7 @@ module.exports.create = (req, res) => {
         contact: req.body.contact,
         price: req.body.price,
         packages: req.body.packages,
-        photo: req.body.photo
+        profileImg: req.body.filename
     });
 
     newOrg2.save()

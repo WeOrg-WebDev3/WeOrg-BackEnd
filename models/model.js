@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
+const bcrypt = require('bcryptjs')
 
 //Define a schema
 var Schema = mongoose.Schema;
@@ -28,27 +29,29 @@ var Organizer = new Schema({
     type: Number, 
     required: true 
   },
-  password: { 
+  event: { 
     type: String, 
     required: true 
   },
-  
   price: { 
     type: Number, 
     required: true 
   },
- 
- 
   packages: { 
     type: String, 
     required: true 
   },
+  profileImg: {
+    type: String,
+    required: false
+  }
   
 });
 
-
+const SALT = 10;
 Organizer.pre('save', function(next){
   var user = this;
+  
 
   if(user.isModified('password')){
       bcrypt.genSalt(SALT,function(err,salt){
