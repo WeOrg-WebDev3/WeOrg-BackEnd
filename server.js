@@ -53,7 +53,7 @@ app.post('/account', (req, res) => {
 
 });
 
-app.post('/signup', (req, res) => {
+app.post('/signup', upload.single('img'), (req, res) => {
   console.log('test')
   var hashedPassword = bcrypt.hashSync(req.body.password, 8);
   User.create({
@@ -65,7 +65,7 @@ app.post('/signup', (req, res) => {
     event: req.body.event,
     price: req.body.price,
     packages: req.body.packages,
-    profileImg: req.body.filename
+    img: req.body.filename
   },
   function (err, User) {
     console.log(User)
@@ -109,11 +109,11 @@ app.post('/signin', (req, res) => {
         auth: true,
         token: token,
         email: doc.email,
-        message: 'login successful'
+        message: 'Login successful'
     });
     }else {
       res.status(401).json({
-          message: 'Wrong password'
+          message: 'No token provided'
       });
   }
   })
@@ -223,6 +223,36 @@ app.post('/uploadImg', upload.single('img'),(req, res)=>{
   }
   let image =  new Image()
 
+})
+
+app.post('/addImage', upload.single('img'), (req, res, next) => {
+  console.log(req.body)
+  let data = {
+    img: req.file.filename
+  };
+  let entry = new Entry(data);
+
+  entry.save()
+    .then(() => {
+      res.json({ message: "Successful!" });
+      console.log('saved')
+    }).catch((err) => {
+      res.status(400).json({ err: err.message })
+    });
+});
+
+app.post('/addMultiple', upload.array('img', 10), (req, res, next) => {
+  const imgs = req.files
+  if (!imgs) {
+      const error = new Error('Please upload a file!')
+      error.httpStatusCode = 400
+      return next(error)
+  } else {
+      imgs.map(img => {
+          store(img.filename)
+      })
+      res.send("success")
+  }
 })
 
 

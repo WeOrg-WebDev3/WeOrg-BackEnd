@@ -22,7 +22,9 @@ var Organizer = new Schema({
     required: true 
   },
   password: { 
-    type: String, 
+    type: String,
+    minlength: 8,
+    maxlength: 17, 
     required: true 
   },
   contact: { 
@@ -41,9 +43,9 @@ var Organizer = new Schema({
     type: String, 
     required: true 
   },
-  profileImg: {
+  img: {
     type: String,
-    required: false
+    required: true
   }
   
 });
