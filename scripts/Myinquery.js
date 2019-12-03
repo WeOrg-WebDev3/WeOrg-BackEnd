@@ -1,4 +1,4 @@
-const query = require('./inquery.js');
+const query = require('../models/inquery');
 
 module.exports.create = (req, res) => {
     const inquired = new query({

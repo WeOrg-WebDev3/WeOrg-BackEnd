@@ -1,10 +1,8 @@
-const port = process.env.PORT || 8001;
+const port = 8002;
 const multer = require('multer');
 const path = require('path');
 const store = require('./helpers/storage.js');
-const auth = require('./scripts/auth')
-
-
+const auth = require('./scripts/auth');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -47,16 +45,14 @@ let storeImg = (filename) => {
 }
 
 //SIGNIN
-app.post('/account', (req, res) => {
-  console.log(req)
-  account.create(req, res);
+// app.post('/account', (req, res) => {
+//   console.log(req)
+//   account.create(req, res);
 
-});
+// });
 
-app.post('/signup', upload.single('img'), (req, res) => {
-  console.log('test')
-  var hashedPassword = bcrypt.hashSync(req.body.password, 8);
-  User.create({
+app.post('/account', upload.single('img'), (req, res) => {
+  let data = {
     name: req.body.name,
     address: req.body.address,
     email: req.body.email,
@@ -65,71 +61,61 @@ app.post('/signup', upload.single('img'), (req, res) => {
     event: req.body.event,
     price: req.body.price,
     packages: req.body.packages,
-    img: req.body.filename
-  },
-  function (err, User) {
-    console.log(User)
-    if (err) {
-    console.log(err,'errr')  
-     res.status(500).send("There was a problem registering the user.")
-    }else{
-    // create a token
-    var token = jwt.sign({ id: User._id }, config.secret, {
-      expiresIn: 86400 // expires in 24 hours
-    });
-      res.status(200).send({ auth: true, token: token });
+    img: req.file.filename
   }
-  }); 
+  let user = new User(data);
+  user.save()
+    .then((doc) => {
+      var token = jwt.sign({ id: doc.email}, config.secret, {
+        expiresIn: 86400 // expires in 24 hours
+      });
+      res.status(200).send({ auth: true, token: token });
+      res.end();
+    })
+    .catch(err => {
+      res.status(500).send("There was a problem registering the user.")
+    })
 });
-
 
 app.post('/signin', (req, res) => {
   console.log(req.body)
   // account.login(req, res);
   var token = req.headers['x-access-token'];
   var match = false;
-  User.findOne({email:req.body.email})
-  .then(doc =>{
-    console.log(doc)
-    if(bcrypt.compareSync(req.body.password, doc.password)){
-      match = true;
-    }else{
-      match = false
-    }
-    if(match){
-      var token = jwt.sign({
-        _id: doc._id,
-        name: doc.name,
-        email: doc.email,
-        password: doc.password
-    }, config.secret, {
-        expiresIn: 86400 // expires in 24 hours
-    });
-    res.status(200).send({
-        auth: true,
-        token: token,
-        email: doc.email,
-        message: 'Login successful'
-    });
-    }else {
-      res.status(401).json({
+  User.findOne({ email: req.body.email })
+    .then(doc => {
+      console.log(doc)
+      if (bcrypt.compareSync(req.body.password, doc.password)) {
+        match = true;
+      } else {
+        match = false
+      }
+      if (match) {
+        var token = jwt.sign({
+          _id: doc._id,
+          name: doc.name,
+          email: doc.email,
+          password: doc.password
+        }, config.secret, {
+          expiresIn: 86400 // expires in 24 hours
+        });
+        res.status(200).send({
+          auth: true,
+          token: token,
+          email: doc.email,
+          message: 'Login successful'
+        });
+      } else {
+        res.status(401).json({
           message: 'No token provided'
-      });
-  }
-  })
-  // if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-
-  // jwt.verify(token, config.secret, function (err, decoded) {
-  //   if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-  //   res.status(200).send(decoded);
-  // });
+        });
+      }
+    })
 })
 
 app.post('/query', (req, res) => {
   quer.create(req, res);
 });
-
 
 app.get('/query/retrieve', (req, res, err) => {
   const name = req.body.name;
@@ -142,19 +128,15 @@ app.get('/query/retrieve', (req, res, err) => {
   }
 })
 
-
 app.put('/query/update/:name', (req, res) => {
   const name = req.params.name;
   quer.update(req, res, name)
 })
 
-
-
 app.delete('/query/delete/:name', (req, res) => {
   const name = req.params.name;
   quer.delete(req, res, name);
 })
-
 
 
 app.get('/retrieveOne/:name', (req, res) => {
@@ -213,45 +195,45 @@ app.delete('/Delete/:name', (req, res) => {
   })
 })
 
-app.post('/uploadImg', upload.single('img'),(req, res)=>{
-  console.log(req.file.filename,'filename')
-  console.log(req.body,'body')
-  let token = jwt.decode(token)
-  // token._id
-  let data = {
+// app.post('/uploadImg', upload.single('img'),(req, res)=>{
+//   console.log(req.file.filename,'filename')
+//   console.log(req.body,'body')
+//   let token = jwt.decode(token)
+//   // token._id
+//   let data = {
 
-  }
-  let image =  new Image()
+//   }
+//   let image =  new Image()
 
-})
+// })
 
-app.post('/addImage', upload.single('img'), (req, res, next) => {
-  console.log(req.body)
-  let data = {
-    img: req.file.filename
-  };
-  let entry = new Entry(data);
+// app.post('/addImage', upload.single('img'), (req, res, next) => {
+//   console.log(req.body)
+//   let data = {
+//     img: req.file.filename
+//   };
+//   let entry = new Entry(data);
 
-  entry.save()
-    .then(() => {
-      res.json({ message: "Successful!" });
-      console.log('saved')
-    }).catch((err) => {
-      res.status(400).json({ err: err.message })
-    });
-});
+//   entry.save()
+//     .then(() => {
+//       res.json({ message: "Successful!" });
+//       console.log('saved')
+//     }).catch((err) => {
+//       res.status(400).json({ err: err.message })
+//     });
+// });
 
 app.post('/addMultiple', upload.array('img', 10), (req, res, next) => {
   const imgs = req.files
   if (!imgs) {
-      const error = new Error('Please upload a file!')
-      error.httpStatusCode = 400
-      return next(error)
+    const error = new Error('Please upload a file!')
+    error.httpStatusCode = 400
+    return next(error)
   } else {
-      imgs.map(img => {
-          store(img.filename)
-      })
-      res.send("success")
+    imgs.map(img => {
+      store(img.filename)
+    })
+    res.send("success")
   }
 })
 

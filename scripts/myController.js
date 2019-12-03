@@ -11,9 +11,10 @@ module.exports.create = (req, res) => {
         email: req.body.email,
         password: req.body.password,
         contact: req.body.contact,
+        event: req.body.event,
         price: req.body.price,
         packages: req.body.packages,
-        profileImg: req.body.filename
+        img: req.body.filename
     });
 
     newOrg2.save()
@@ -28,12 +29,12 @@ module.exports.create = (req, res) => {
 }
 
 module.exports.login = (req, res) => {
-    NewORg.findOne({'email':req.body.email},(err,user)=>{
-        if(!user) res.json({message:"Login failed, user not found"})
+    NewORg.findOne({ 'email': req.body.email }, (err, user) => {
+        if (!user) res.json({ message: "Login failed, user not found" })
 
-        user.comparePassword(req.body.password,(err,isMatch)=>{
-            if(err) throw err;
-            if(isMatch) return res.status(200).json({
+        user.comparePassword(req.body.password, (err, isMatch) => {
+            if (err) throw err;
+            if (isMatch) return res.status(200).json({
                 message: "Succesfully log"
             });
             res.status(400).send("Email not found")
