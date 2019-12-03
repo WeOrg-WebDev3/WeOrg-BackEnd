@@ -1,8 +1,9 @@
 const port = process.env.PORT || 8000;
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require('multer')
+const multer = require('multer');
 const store = require('./helpers/storage');
+const path = require('path');
 const app = express();
 const mongoose = require('mongoose');
 const account = require('./scripts/myController');

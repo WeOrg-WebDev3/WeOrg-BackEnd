@@ -103,7 +103,7 @@ const account = require('./myController');
 //   res.status(200).json(tempdata);
 // });
 const helper = require('./myController')
-authRoute.post('/account', (req, res) => {
+authRoute.post('/login', (req, res) => {
     let email = req.body.email
     helper.findOrgOne(email).then(resp => {
         if (resp != null) {
