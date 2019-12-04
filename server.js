@@ -1,4 +1,4 @@
-const port = process.env.PORT || 8001;
+const port = process.env.PORT || 8002;
 const multer = require('multer');
 const store = require('./helpers/storage.js');
 const auth = require('./scripts/auth')
