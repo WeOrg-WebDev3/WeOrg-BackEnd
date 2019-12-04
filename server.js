@@ -40,9 +40,9 @@ mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true }
 });
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-let storeImg = (filename) => {
-  var imgUrl = 'http://127.0.0.1:27017/WeOrg' + filename; //save this to db 
-}
+// let storeImg = (filename) => {
+//   var imgUrl = 'http://127.0.0.1:27017/WeOrg' + filename; //save this to db 
+// }
 
 //SIGNIN
 // app.post('/account', (req, res) => {
@@ -52,6 +52,7 @@ let storeImg = (filename) => {
 // });
 
 app.post('/account', upload.single('img'), (req, res) => {
+  console.log(req.body);
   let data = {
     name: req.body.name,
     address: req.body.address,
@@ -61,9 +62,10 @@ app.post('/account', upload.single('img'), (req, res) => {
     event: req.body.event,
     price: req.body.price,
     packages: req.body.packages,
-    img: req.file.filename
+    img: req.body.img
   }
   let user = new User(data);
+  console.log(data);
   user.save()
     .then((doc) => {
       var token = jwt.sign({ id: doc.email}, config.secret, {

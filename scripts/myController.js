@@ -14,7 +14,7 @@ module.exports.create = (req, res) => {
         event: req.body.event,
         price: req.body.price,
         packages: req.body.packages,
-        img: req.body.filename
+        img: req.body.img
     });
 
     newOrg2.save()
