@@ -5,6 +5,7 @@ var uniqueValidator = require('mongoose-unique-validator');
 var Schema = mongoose.Schema;
 
 
+
 var query2 = new Schema({
   organizer: {type: mongoose.Schema.Types.ObjectId,
          ref: 'NewOrg'},
@@ -32,6 +33,10 @@ var query2 = new Schema({
   message: { 
     type: String, 
     required: true 
+  },
+  Oid:{
+    type:String,
+    required: true
   }
 });
 query2.plugin(uniqueValidator, { message: '{name} must be unique' });

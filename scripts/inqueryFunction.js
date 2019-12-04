@@ -1,4 +1,4 @@
-const quer = require('./inqueryCreate.js');
+const quer = require('./inqueryModel.js');
 function findOnequer(namei) {
     return new Promise((resolve, reject) => {
       quer.findOne({ name: namei }, (err, dbres) => {

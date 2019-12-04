@@ -1,4 +1,4 @@
-const PORT = 8002;
+const PORT = 8001;
 const multer = require('multer');
 const bcrypt = require('bcryptjs')
 
@@ -30,7 +30,7 @@ var imgUrl = `http://localhost:${PORT}/files/`
 
 
 mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, createIndexes: true,useFindAndModify:false }
+mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, createIndexes: true, useFindAndModify: false }
 ).then(() => {
     console.log("Connected to dbs.");
 }).catch(err => {
@@ -115,7 +115,7 @@ app.post('/query', function (req, res) {
 });
 
 // for one inquery name
-app.post('/retInquerybyName/:name', function (req, res) {
+app.post('/retInquerybyOrgId/:', function (req, res) {
     const namei = req.params.name;
     console.log(namei)
     if (namei != undefined) {
@@ -166,15 +166,18 @@ app.delete('/DeleteOneInquerbyName/:name', function (req, res) {
 // creating Account
 app.post('/account', function (req, res) {
     account.create(req, res);
+
 });
+
+
 
 // Logging In
 var userId;
 app.post('/signin', (req, res) => {
-      const emaili = req.body.email
+    const emaili = req.body.email
     console.log(req.body)
     async function getEmail() {
-         try {
+        try {
             var result = await action.findEmailOne(emaili);
             bcrypt.compare(req.body.password, result[0].password, (err, user) => {
                 console.log(user)
@@ -195,15 +198,15 @@ app.post('/signin', (req, res) => {
                         id: result[0]._id,
                         message: 'login successful'
                     });
-                }else{
-                  res.status(200).json({
-                    auth: false,
-                    token: token,
-                    email: result[0].email,
-                    id: result[0]._id,
-                    message: 'Invalid Inputs'
-                });
-                  
+                } else {
+                    res.status(200).json({
+                        auth: false,
+                        token: token,
+                        email: result[0].email,
+                        id: result[0]._id,
+                        message: 'Invalid Inputs'
+                    });
+
                 }
             })
             // User.comparePa(req.body.password, (err, isMatch) => {
@@ -226,12 +229,12 @@ app.post('/signin', (req, res) => {
             //         });
             //     }
             // })
-         } catch (err) {
+        } catch (err) {
             res.status(400).json(err)
             console.log(err)
-         }
+        }
     }
-      getEmail();
+    getEmail();
 })
 // console.log(req.body.email)
 // const emaili = req.body.email
@@ -266,7 +269,7 @@ app.post('/signin', (req, res) => {
 app.get('/retrieveOneEvent/:event', function (req, res) {
     //console.log(req.body)
     const namei = req.params.event;
-   // console.log(namei)
+    // console.log(namei)
     async function getEvent() {
         try {
             var result = await action.findEventOne(namei);
@@ -281,13 +284,13 @@ app.get('/retrieveOneEvent/:event', function (req, res) {
 //retrieve by id
 app.post('/retriveprofile/:id', function (req, res) {
     console.log('test')
-    console.log(req.params.id,'body')
+    console.log(req.params.id, 'body')
     let namei = req.params.id;
     async function getId() {
-        try {   
+        try {
             var result = await action.findIdOne(mongoose.Types.ObjectId(namei));
             res.status(200).json(result);
-            console.log(result.dbres[0],'result')
+            console.log(result.dbres[0], 'result')
         } catch (err) {
             res.status(400).json(err)
             console.log(err)
@@ -323,9 +326,9 @@ app.post('/retrieveAll', function (req, res) {
 
 // updating organazer's profile by name
 app.put('/Update/:id', function (req, res) {
-  console.log(req.params.id)
+    console.log(req.params.id)
     const namei = req.params.id;
-    action.Update(namei,req.body).then(resp => {
+    action.Update(namei, req.body).then(resp => {
         res.send(resp)
     }).catch(err => {
         res.send(err)

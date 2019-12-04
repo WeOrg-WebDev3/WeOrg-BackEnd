@@ -10,11 +10,9 @@ var query2 = new Schema({
          ref: 'NewOrg'},
   name: { 
     type: String,
-    unique: true 
   },
   email: { 
     type: String, 
-    unique: true, 
     required: true 
   },
   contact: { 
@@ -29,6 +27,7 @@ var query2 = new Schema({
     type: String, 
     required: true 
   }
+  
 });
 query2.plugin(uniqueValidator, { message: '{name} must be unique' });
 
