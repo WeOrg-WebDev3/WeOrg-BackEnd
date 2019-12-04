@@ -67,9 +67,9 @@ function All() {
 }
 
 
-function Update(namei) {
+function Update(namei,data) {
     return new Promise((resolve, reject) => {
-        User.updateOne({ name: namei }, (err, dbres) => {
+        User.findByIdAndUpdate(namei ,data, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {

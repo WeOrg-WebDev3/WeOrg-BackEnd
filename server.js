@@ -30,7 +30,7 @@ var imgUrl = `http://localhost:${PORT}/files/`
 
 
 mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, createIndexes: true }
+mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, createIndexes: true,useFindAndModify:false }
 ).then(() => {
     console.log("Connected to dbs.");
 }).catch(err => {
@@ -195,6 +195,15 @@ app.post('/signin', (req, res) => {
                         id: result[0]._id,
                         message: 'login successful'
                     });
+                }else{
+                  res.status(200).json({
+                    auth: false,
+                    token: token,
+                    email: result[0].email,
+                    id: result[0]._id,
+                    message: 'Invalid Inputs'
+                });
+                  
                 }
             })
             // User.comparePa(req.body.password, (err, isMatch) => {
@@ -313,9 +322,10 @@ app.post('/retrieveAll', function (req, res) {
 })
 
 // updating organazer's profile by name
-app.put('/Update/:name', function (req, res) {
-    const namei = req.params.name;
-    action.Update(namei).then(resp => {
+app.put('/Update/:id', function (req, res) {
+  console.log(req.params.id)
+    const namei = req.params.id;
+    action.Update(namei,req.body).then(resp => {
         res.send(resp)
     }).catch(err => {
         res.send(err)
@@ -341,7 +351,7 @@ app.delete('/Delete/:name', function (req, res) {
 //     res.json({ data: user });
 //     //console.log(user)
 //   });
-// })
+// })Y
 
 app.use(auth)
 app.listen(PORT, () => {
