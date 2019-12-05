@@ -1,4 +1,4 @@
-const PORT = 8001;
+const PORT = 8002;
 const multer = require('multer');
 const bcrypt = require('bcryptjs')
 
@@ -39,20 +39,6 @@ mongoose.connect(dbConfig, { useNewUrlParser: true, useUnifiedTopology: true, cr
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
-
-
-
-// var ImageSchema = mongoose.Schema({
-//   name: String,
-//   src: String
-// },{
-//   collection:"images"
-// });
-
-
-// images
-// compile schema to model
-// var Image = mongoose.model('Image', ImageSchema, 'images'); //images is the collection
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -151,8 +137,8 @@ app.put('/UpdateOneInquery/:name', function (req, res) {
 })
 
 // delete query by client;s name
-app.delete('/DeleteOneInquerbyName/:name', function (req, res) {
-    const namei = req.params.name;
+app.delete('/DeleteOneInquerbyName/:email', function (req, res) {
+    const namei = req.params.email;
     inqueraction.Delete(namei).then(resp => {
         res.send(resp)
     }).catch(err => {
@@ -165,7 +151,6 @@ app.delete('/DeleteOneInquerbyName/:name', function (req, res) {
 // for Account
 
 // creating Account
-<<<<<<< HEAD
 app.post('/account', upload.single('img'), function (req, res) {
     console.log(req.file.filename);
     
@@ -196,11 +181,6 @@ app.post('/account', upload.single('img'), function (req, res) {
 
             res.status(500).send("There was a problem registering the user."+err)
         })
-=======
-app.post('/account', function (req, res) {
-    account.create(req, res);
-
->>>>>>> 6e07db5a7b0d129d098d086e7887f5fb23934d0e
 });
 
 
@@ -208,7 +188,6 @@ app.post('/account', function (req, res) {
 // Logging In
 var userId;
 app.post('/signin', (req, res) => {
-<<<<<<< HEAD
     var token = req.headers['x-access-token'];
     var match = false;
     User.findOne({ email: req.body.email })
@@ -243,119 +222,8 @@ app.post('/signin', (req, res) => {
                 });
             }
         })
-=======
-    const emaili = req.body.email
-    console.log(req.body)
-    async function getEmail() {
-        try {
-            var result = await action.findEmailOne(emaili);
-            bcrypt.compare(req.body.password, result[0].password, (err, user) => {
-                console.log(user)
-                if (user) {
-                    userId = req.body._id;
-                    var token = jwt.sign({
-                        _id: result[0]._id,
-                        name: result[0].name,
-                        email: result[0].email,
-                        password: result[0].password
-                    }, config.secret, {
-                        expiresIn: 86400 // expires in 24 hours
-                    });
-                    res.status(200).json({
-                        auth: true,
-                        token: token,
-                        email: result[0].email,
-                        id: result[0]._id,
-                        message: 'login successful'
-                    });
-                } else {
-                    res.status(200).json({
-                        auth: false,
-                        token: token,
-                        email: result[0].email,
-                        id: result[0]._id,
-                        message: 'Invalid Inputs'
-                    });
-
-                }
-            })
-            // User.comparePa(req.body.password, (err, isMatch) => {
-            //     if (err) throw err;
-            //     if (isMatch) {
-            //         userId = req.body._id;
-            //         var token = jwt.sign({
-            //             _id: result[0]._id,
-            //             name: result[0].name,
-            //             email: result[0].email,
-            //             password: result[0].password
-            //         }, config.secret, {
-            //             expiresIn: 86400 // expires in 24 hours
-            //         });
-            //         res.status(200).send({
-            //             auth: true,
-            //             token: token,
-            //             email: result[0].email,
-            //             message: 'login successful'
-            //         });
-            //     }
-            // })
-        } catch (err) {
-            res.status(400).json(err)
-            console.log(err)
-        }
-    }
-    getEmail();
->>>>>>> 6e07db5a7b0d129d098d086e7887f5fb23934d0e
 })
-// User.comparePa(req.body.password, (err, isMatch) => {
-//     if (err) throw err;
-//     if (isMatch) {
-//         userId = req.body._id;
-//         var token = jwt.sign({
-//             _id: result[0]._id,
-//             name: result[0].name,
-//             email: result[0].email,
-//             password: result[0].password
-//         }, config.secret, {
-//             expiresIn: 86400 // expires in 24 hours
-//         });
-//         res.status(200).send({
-//             auth: true,
-//             token: token,
-//             email: result[0].email,
-//             message: 'login successful'
-//         });
-//     }
-// })
 
-// console.log(req.body.email)
-// const emaili = req.body.email
-// User.findOne({'email':emaili},(err,user)=>{
-//     if(!user) res.json({message:"Login failed, user not found"})
-
-// user.comparePassword(req.body.password,(err,isMatch)=>{
-//     if(err) throw err;
-//     if (isMatch) {
-//       userId = req.body._id;
-//       var token = jwt.sign({
-//           _id: user._id,
-//           name: user.name,
-//           email: user.email,
-//           password: user.password
-//       }, config.secret, {
-//           expiresIn: 86400 // expires in 24 hours
-//       });
-//       res.status(200).send({
-//           auth: true,
-//           token: token,
-//           email: user,
-//           message: 'login successful'
-//       });
-//   } 
-//         res.status(400).send("Email not found")
-//     })
-// })
-// })
 
 // retrieve one data by event
 app.get('/retrieveOneEvent/:event', function (req, res) {
@@ -375,20 +243,12 @@ app.get('/retrieveOneEvent/:event', function (req, res) {
 })
 //retrieve by id
 app.post('/retriveprofile/:id', function (req, res) {
-<<<<<<< HEAD
-=======
-    console.log('test')
->>>>>>> 6e07db5a7b0d129d098d086e7887f5fb23934d0e
     console.log(req.params.id, 'body')
     let namei = req.params.id;
     async function getId() {
         try {
             var result = await action.findIdOne(mongoose.Types.ObjectId(namei));
             res.status(200).json(result);
-<<<<<<< HEAD
-=======
-            console.log(result.dbres[0], 'result')
->>>>>>> 6e07db5a7b0d129d098d086e7887f5fb23934d0e
         } catch (err) {
             res.status(400).send(err)
         }
@@ -396,7 +256,6 @@ app.post('/retriveprofile/:id', function (req, res) {
     getId();
 
 })
-
 
 
 //retireve for inquiries
@@ -409,6 +268,19 @@ app.post('/retriveinquiries/:id', function (req, res) {
     })
 
 })
+
+app.delete('/deleteInquiry/:email', function (req, res) {
+    console.log(req.body,"This is the body")
+    const iname = req.params.email;
+    action.deleteInquiry(iname).then(resp => {
+        res.send(resp)
+    }).catch(err => {
+        res.send(err)
+    })
+
+})
+
+
 app.post('/retrivephoto/:id',upload.array('img'), function (req, res) {
     console.log(req.file.filename);
     const iname = req.params.id;
@@ -447,7 +319,7 @@ app.post('/retrieveAll', function (req, res) {
 
 // updating organazer's profile by name
 app.put('/Update/:id', function (req, res) {
-    console.log(req.params.id)
+    console.log(req.body,"hihi")
     const namei = req.params.id;
     action.Update(namei, req.body).then(resp => {
         res.send(resp)
@@ -466,16 +338,6 @@ app.delete('/Delete/:name', function (req, res) {
         res.send(err)
     })
 })
-//retrieve by id
-// app.get('/retriveprofile/', function (req, res) {
-//   action.find({ _id: userId }, (err, user) => {
-//     if (err) {
-//       res.send(err);
-//     }
-//     res.json({ data: user });
-//     //console.log(user)
-//   });
-// })Y
 
 app.use(auth)
 app.listen(PORT, () => {

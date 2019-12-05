@@ -109,9 +109,9 @@ function updatePhoto(iname,data) {
 
 
 
-function Delete(namei) {
+function deleteInquiry(namei) {
     return new Promise((resolve, reject) => {
-        User.deleteOne({ name: namei }, (err, dbres) => {
+        User.deleteOne( inquires,{ $pull: { email: namei } }, (err, dbres) => {
             if (err) {
                 reject(err);
             } else {
@@ -127,8 +127,8 @@ module.exports = {
     findOrgOne,
     All,
     Update,
-    Delete,
+    
     findEventOne,
     findEmailOne,
-    findIdOne, updateInquery,updatePhoto
+    findIdOne, updateInquery,updatePhoto,deleteInquiry
 }

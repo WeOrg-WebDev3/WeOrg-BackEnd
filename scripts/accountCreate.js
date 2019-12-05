@@ -11,11 +11,7 @@ module.exports.create = (req, res) => {
         contact: req.body.contact,
         price: req.body.price,
         packages: req.body.packages,
-<<<<<<< HEAD
         inquires:req.body.inquires
-=======
-        
->>>>>>> 6e07db5a7b0d129d098d086e7887f5fb23934d0e
     });
 
 

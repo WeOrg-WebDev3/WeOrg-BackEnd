@@ -45,7 +45,6 @@ var userSchema = new Schema({
     type: String,
     required: true
   },
-<<<<<<< HEAD
   inquires: {
     type: Array,
 
@@ -57,16 +56,6 @@ var userSchema = new Schema({
   randomphoto:{
     type: Array,
   }
-=======
-  photo: {
-    name: String,
-    src: String
-  },
-  
-
-
-
->>>>>>> 6e07db5a7b0d129d098d086e7887f5fb23934d0e
 
 }, {
     collection: "CreateOrganizer"
