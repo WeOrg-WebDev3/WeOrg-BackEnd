@@ -43,6 +43,11 @@ var Organizer = new Schema({
     type: String, 
     required: true 
   },
+  img: {
+    type: String,
+    required: true
+
+  }
   
 });
 
