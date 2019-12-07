@@ -91,6 +91,28 @@ function updateInquery(iname,data) {
         )
     })
 }
+
+function addPhoto(iname,photodata) {
+    console.log(photodata)
+    return new Promise((resolve, reject) => {
+        User.findByIdAndUpdate(iname, { $push: { randomphoto: photodata } }, (err, dbres) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(dbres);
+            }
+        }
+        )
+    })
+}
+
+
+
+
+
+
+
+
 function updatePhoto(iname,data) {
     return new Promise((resolve, reject) => {
         User.findByIdAndUpdate(iname, { $push: { randomphoto: data } }, (err, dbres) => {
@@ -131,4 +153,4 @@ module.exports = {
     findEventOne,
     findEmailOne,
     findIdOne, updateInquery,updatePhoto,deleteInquiry
-}
+,addPhoto}

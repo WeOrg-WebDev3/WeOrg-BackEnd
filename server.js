@@ -152,7 +152,7 @@ app.delete('/DeleteOneInquerbyName/:email', function (req, res) {
 
 // creating Account
 app.post('/account', upload.single('img'), function (req, res) {
-    console.log(req.file.filename);
+    // console.log(req.file.filename,"sa sign up");
     
     var details = JSON.parse(req.body.details)
     let data = {
@@ -192,7 +192,7 @@ app.post('/signin', (req, res) => {
     var match = false;
     User.findOne({ email: req.body.email })
         .then(doc => {
-            console.log(doc)
+            console.log(doc,"this is doc")
             if (bcrypt.compareSync(req.body.password, doc.password)) {
                 match = true;
             } else {
@@ -269,6 +269,29 @@ app.post('/retriveinquiries/:id', function (req, res) {
 
 })
 
+
+app.post('/addporfolio/:id',upload.array('img'), function (req, res) {
+console.log(req.body.id,"test")
+    const iname = req.params.id;
+
+    let photo = req.files[0].filename
+   
+    console.log(iname)
+    console.log(req.files[0].filename)
+
+    action.addPhoto(iname,photo).then(resp => {
+        res.send(resp)
+    }).catch(err => {
+        res.send(err)
+    })
+
+})
+
+
+
+
+
+
 app.delete('/deleteInquiry/:email', function (req, res) {
     console.log(req.body,"This is the body")
     const iname = req.params.email;
@@ -282,7 +305,7 @@ app.delete('/deleteInquiry/:email', function (req, res) {
 
 
 app.post('/retrivephoto/:id',upload.array('img'), function (req, res) {
-    console.log(req.file.filename);
+    
     const iname = req.params.id;
     console.log(req.body.id,"This is a  body")
     action.updatePhoto(iname, req.body.id).then(resp => {
