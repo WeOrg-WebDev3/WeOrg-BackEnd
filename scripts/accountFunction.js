@@ -79,6 +79,26 @@ function Update(namei, data) {
     })
 }
 
+// function UpdatePP(namei, data) {
+//     return new Promise((resolve, reject) => {
+//         User.findByIdAndUpdate(namei, data, (err, dbres) => {
+//             if (err) {
+//                 reject(err);
+//             } else {
+//                 resolve(dbres);
+//             }
+//         })
+//     })
+// }
+
+
+
+
+
+
+
+
+
 function updateInquery(iname,data) {
     return new Promise((resolve, reject) => {
         User.findByIdAndUpdate(iname, { $push: { inquires: data } }, (err, dbres) => {

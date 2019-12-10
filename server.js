@@ -259,7 +259,7 @@ app.post('/retriveprofile/:id', function (req, res) {
 
 
 //retireve for inquiries
-app.post('/retriveinquiries/:id', function (req, res) {
+app.post('/retrieveinquiries/:id', function (req, res) {
     const iname = req.params.id;
     action.updateInquery(iname, req.body).then(resp => {
         res.send(resp)
@@ -352,6 +352,22 @@ app.put('/Update/:id', function (req, res) {
 })
 
 
+
+// updating organazer's profile by name
+// app.put('/Update/profile/:id', upload.single('img'),function (req, res) {
+//     console.log(req.body,"hihi")
+//     const namei = req.params.id;
+//     action.UpdatePP(namei, req.body).then(resp => {
+//         res.send(resp)
+//     }).catch(err => {
+//         res.send(err)
+//     })
+// })
+
+
+
+
+retriveinquiries
 // deleting ogranizer's data by name
 app.delete('/Delete/:name', function (req, res) {
     const namei = req.params.name;
