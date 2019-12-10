@@ -258,11 +258,17 @@ app.post('/retriveprofile/:id', function (req, res) {
 })
 
 
+const email = require('./scripts/email');
+
+
+
 //retireve for inquiries
-app.post('/retrieveinquiries/:id', function (req, res) {
+app.post('/addinquiry/:id', function (req, res) {
+    console.log(req.body,"this is a body")
     const iname = req.params.id;
     action.updateInquery(iname, req.body).then(resp => {
         res.send(resp)
+        email.email(req.body.email)
     }).catch(err => {
         res.send(err)
     })
@@ -367,7 +373,6 @@ app.put('/Update/:id', function (req, res) {
 
 
 
-retriveinquiries
 // deleting ogranizer's data by name
 app.delete('/Delete/:name', function (req, res) {
     const namei = req.params.name;
